@@ -20,6 +20,7 @@ def preprocess(data_dir, split):
     split_file = join(data_dir, "im2latex_{}_filter.lst".format(split))
     pairs = []
     transform = transforms.ToTensor()
+    data_dir_save = "./data/preprocessed/"
     with open(split_file, 'r') as f:
         for line in f:
             img_name, formula_id = line.strip('\n').split()
@@ -29,11 +30,9 @@ def preprocess(data_dir, split):
             img_tensor = transform(img)
             formula = formulas[int(formula_id)]
             pair = (img_tensor, formula)
-            pairs.append(pair)
-        pairs.sort(key=img_size)
+            out_file = join(data_dir_save,f"{split}_{formula_id}.pt")
+            torch.save(pair, out_file)
 
-    out_file = join(data_dir, "{}.pkl".format(split))
-    torch.save(pairs, out_file)
     print("Save {} dataset to {}".format(split, out_file))
 
 
@@ -50,5 +49,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     splits = ["validate", "test", "train"]
+    splits = ["validate", "test"]
     for s in splits:
         preprocess(args.data_path, s)
