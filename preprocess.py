@@ -49,6 +49,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     splits = ["validate", "test", "train"]
-    splits = ["validate", "test"]
     for s in splits:
         preprocess(args.data_path, s)
