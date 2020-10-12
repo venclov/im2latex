@@ -20,7 +20,7 @@ class Im2LatexDataset(Dataset):
         self.split_files = [file_name for file_name in files_in_data_dir if file_name.startswith(self.split)]
 
     def __getitem__(self, index):
-        loaded_pair = torch.load(self.data_dir, self.split_files[index])
+        loaded_pair = torch.load(join(self.data_dir, self.split_files[index]))
         a_pair = (loaded_pair[0], " ".join(loaded_pair[1].split()[:self.max_len]))
         return a_pair
 
