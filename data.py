@@ -1,4 +1,5 @@
 from os.path import join
+import os
 
 from torch.utils.data import Dataset
 import torch
@@ -14,17 +15,14 @@ class Im2LatexDataset(Dataset):
         self.data_dir = data_dir
         self.split = split
         self.max_len = max_len
-        self.pairs = self._load_pairs()
-
-    def _load_pairs(self):
-        pairs = torch.load(join(self.data_dir, "{}.pkl".format(self.split)))
-        for i, (img, formula) in enumerate(pairs):
-            pair = (img, " ".join(formula.split()[:self.max_len]))
-            pairs[i] = pair
-        return pairs
+        # self.pairs = self._load_pairs()
+        files_in_data_dir = os.listdir(self.data_dir)
+        self.split_files = [file_name for file_name in files_in_data_dir if file_name.startswith(self.split)]
 
     def __getitem__(self, index):
-        return self.pairs[index]
+        loaded_pair = torch.load(self.data_dir, self.split_files[index])
+        a_pair = (loaded_pair[0], " ".join(loaded_pair[1].split()[:self.max_len]))
+        return a_pair
 
     def __len__(self):
-        return len(self.pairs)
+        return len(self.split_files)
